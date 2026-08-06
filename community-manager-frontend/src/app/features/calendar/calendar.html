@@ -1,0 +1,76 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement du calendrier...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="loadCalendar()">Réessayer</button>
+  </div>
+} @else if (entries(); as days) {
+  <div class="cal">
+    <header class="cal__header">
+      <div>
+        <p class="eyebrow">Calendrier éditorial</p>
+        <h1 class="cal__title">Les 14 prochains jours</h1>
+      </div>
+      <button mat-flat-button class="cal__generate" [disabled]="generating()" (click)="generateContent()">
+        <mat-icon>auto_awesome</mat-icon>
+        @if (generating()) { Génération en cours... } @else { Générer le contenu du mois }
+      </button>
+    </header>
+
+    @if (generateMessage()) {
+      <p class="cal__generate-message">{{ generateMessage() }}</p>
+    }
+
+    @if (days.length === 0) {
+      <div class="state-container">
+        <mat-icon>event_busy</mat-icon>
+        <p>Aucune donnée de calendrier pour le moment.</p>
+      </div>
+    } @else {
+      <div class="cal-grid">
+        @for (day of days; track day.date) {
+          <div
+            class="day-card"
+            [class.day-card--posting]="day.postingDay"
+            [class.day-card--today]="isToday(day.date)"
+          >
+            <div class="day-card__date">
+              <span class="day-card__weekday">{{ formatDate(day.date).weekday }}</span>
+              <span class="day-card__day">{{ formatDate(day.date).day }}</span>
+              @if (isToday(day.date)) {
+                <span class="day-card__today-badge">Aujourd'hui</span>
+              }
+            </div>
+
+            @if (day.postingDay) {
+              <div class="day-card__planned">
+                <mat-icon>edit_note</mat-icon>
+                <span>{{ contentTypeLabel(day.suggestedContentType) }}</span>
+              </div>
+
+              @if (day.posts.length > 0) {
+                <ul class="day-card__posts">
+                  @for (post of day.posts; track post.id) {
+                    <li>
+                      <span class="post-chip" [class]="'post-chip--' + post.network.toLowerCase()">{{ networkLabel(post.network) }}</span>
+                      <span class="status-chip" [class]="'status-chip--' + post.status.toLowerCase()">{{ statusLabel(post.status) }}</span>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="day-card__empty">En attente de génération</p>
+              }
+            } @else {
+              <p class="day-card__rest">Jour de repos</p>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

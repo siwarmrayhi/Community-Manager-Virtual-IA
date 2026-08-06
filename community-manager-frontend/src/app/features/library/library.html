@@ -1,0 +1,161 @@
+<div class="lib">
+  <header class="lib__header">
+    <div>
+      <p class="eyebrow">Bibliothèque de contenu</p>
+      <h1 class="lib__title">Tous vos posts</h1>
+    </div>
+    <button mat-flat-button class="lib__generate" [disabled]="generating()" (click)="generatePost()">
+      <mat-icon>auto_awesome</mat-icon>
+      @if (generating()) { Génération... } @else { Générer un post }
+    </button>
+  </header>
+
+  @if (statistics(); as stats) {
+    <div class="stats-strip">
+      <div class="stats-strip__item">
+        <span class="stats-strip__value">{{ stats.postsGenerated }}</span>
+        <span class="stats-strip__label">générés</span>
+      </div>
+      <div class="stats-strip__item">
+        <span class="stats-strip__value">{{ stats.postsValidated }}</span>
+        <span class="stats-strip__label">validés</span>
+      </div>
+      <div class="stats-strip__item">
+        <span class="stats-strip__value">{{ (stats.validationRate * 100).toFixed(0) }}%</span>
+        <span class="stats-strip__label">taux de validation</span>
+      </div>
+      @if (stats.mostUsedNetwork) {
+        <div class="stats-strip__item">
+          <span class="stats-strip__value stats-strip__value--text">{{ networkLabel(stats.mostUsedNetwork) }}</span>
+          <span class="stats-strip__label">réseau le plus actif</span>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select (selectionChange)="updateFilter('type', $event.value)">
+        <mat-option value="">Tous</mat-option>
+        @for (t of contentTypes; track t) {
+          <mat-option [value]="t">{{ contentTypeLabel(t) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Réseau</mat-label>
+      <mat-select (selectionChange)="updateFilter('network', $event.value)">
+        <mat-option value="">Tous</mat-option>
+        @for (n of networks; track n) {
+          <mat-option [value]="n">{{ networkLabel(n) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select (selectionChange)="updateFilter('status', $event.value)">
+        <mat-option value="">Tous</mat-option>
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ statusLabel(s) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Du</mat-label>
+      <input matInput type="date" (change)="updateFilter('from', $any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Au</mat-label>
+      <input matInput type="date" (change)="updateFilter('to', $any($event.target).value)" />
+    </mat-form-field>
+
+    <button mat-stroked-button class="filters__reset" (click)="resetFilters()">Réinitialiser</button>
+  </div>
+
+  @if (loading()) {
+    <div class="state-container">
+      <mat-spinner diameter="48" />
+      <p>Chargement des posts...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-container state-container--error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ errorMessage() }}</p>
+      <button mat-stroked-button (click)="loadPosts()">Réessayer</button>
+    </div>
+  } @else if (posts().length === 0) {
+    <div class="state-container">
+      <mat-icon>inbox</mat-icon>
+      <p>Aucun post ne correspond à ces filtres.</p>
+    </div>
+  } @else {
+    <div class="post-list">
+      @for (post of posts(); track post.id) {
+        <article class="post-card">
+          <header class="post-card__header">
+            <span class="chip chip--network" [class]="'chip--' + post.network.toLowerCase()">{{ networkLabel(post.network) }}</span>
+            <span class="chip chip--status" [class]="'chip--status-' + post.status.toLowerCase()">{{ statusLabel(post.status) }}</span>
+            <span class="post-card__type">{{ contentTypeLabel(post.contentType) }}</span>
+            @if (post.plannedDate) {
+              <span class="post-card__date">{{ post.plannedDate }}</span>
+            }
+          </header>
+
+          @if (post.generatedByFallback && post.generationNotice) {
+            <p class="post-card__notice">
+              <mat-icon>info</mat-icon>
+              {{ post.generationNotice }}
+            </p>
+          }
+
+          @if (editingId() === post.id) {
+            <textarea
+              class="post-card__edit-area"
+              rows="4"
+              [value]="editText()"
+              (input)="editText.set($any($event.target).value)"
+            ></textarea>
+            <div class="post-card__actions">
+              <button mat-flat-button class="btn-accent" [disabled]="actionLoadingId() === post.id" (click)="saveEdit(post)">
+                Enregistrer
+              </button>
+              <button mat-stroked-button (click)="cancelEdit()">Annuler</button>
+            </div>
+          } @else {
+            <p class="post-card__text">{{ post.text }}</p>
+
+            @if (post.hashtags) {
+              <p class="post-card__hashtags">{{ post.hashtags }}</p>
+            }
+
+            <div class="post-card__actions">
+              @if (isPending(post)) {
+                <button mat-flat-button class="btn-accent" [disabled]="actionLoadingId() === post.id" (click)="validate(post)">
+                  <mat-icon>check</mat-icon> Valider
+                </button>
+                <button mat-stroked-button [disabled]="actionLoadingId() === post.id" (click)="startEdit(post)">
+                  <mat-icon>edit</mat-icon> Modifier
+                </button>
+                <button mat-stroked-button [disabled]="actionLoadingId() === post.id" (click)="requestAlternative(post)">
+                  <mat-icon>refresh</mat-icon> Alternative
+                </button>
+                <button mat-stroked-button class="btn-danger" [disabled]="actionLoadingId() === post.id" (click)="reject(post)">
+                  <mat-icon>close</mat-icon> Rejeter
+                </button>
+              } @else {
+                <button mat-stroked-button [disabled]="actionLoadingId() === post.id" (click)="reuse(post)">
+                  <mat-icon>content_copy</mat-icon> Réutiliser
+                </button>
+              }
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,105 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement du tableau de bord...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="loadDashboard()">Réessayer</button>
+  </div>
+} @else if (data(); as d) {
+  <div class="dash">
+
+    <header class="dash__header">
+      <div>
+        <p class="eyebrow">Tableau de bord</p>
+        <h1 class="dash__title">Vue d'ensemble</h1>
+      </div>
+      @if (d.pendingValidationCount > 0) {
+        <span class="dash__pill">{{ d.pendingValidationCount }} post{{ d.pendingValidationCount > 1 ? 's' : '' }} en attente</span>
+      }
+    </header>
+
+    <section class="dash-grid">
+      <div class="dash-card dash-card--kpi">
+        <p class="dash-card__label">Posts générés</p>
+        <p class="dash-card__value">{{ d.statistics.postsGenerated }}</p>
+      </div>
+
+      <div class="dash-card dash-card--kpi">
+        <p class="dash-card__label">Taux de validation</p>
+        <p class="dash-card__value">{{ (d.statistics.validationRate * 100) | number: '1.0-0' }}%</p>
+      </div>
+
+      <div class="dash-card dash-card--kpi">
+        <p class="dash-card__label">Réseau le plus actif</p>
+        <p class="dash-card__value dash-card__value--text">{{ networkLabel(d.statistics.mostUsedNetwork) }}</p>
+      </div>
+
+      <div class="dash-card dash-card--kpi">
+        <p class="dash-card__label">Format le plus utilisé</p>
+        <p class="dash-card__value dash-card__value--text">{{ contentTypeLabel(d.statistics.mostUsedContentType) }}</p>
+      </div>
+
+      <div class="dash-card dash-card--wide">
+        <p class="eyebrow">Prochain post prévu</p>
+        @if (d.nextPlannedPost; as post) {
+          <div class="next-post">
+            <span class="next-post__network">{{ networkLabel(post.network) }}</span>
+            <p class="next-post__text">{{ post.text }}</p>
+            @if (post.plannedDate) {
+              <span class="next-post__date">{{ formatDate(post.plannedDate) }}</span>
+            }
+          </div>
+        } @else {
+          <p class="dash-card__empty">Aucun post planifié pour le moment.</p>
+        }
+      </div>
+
+      <div class="dash-card dash-card--wide">
+        <p class="eyebrow">Suggestions</p>
+        @if (d.newSuggestionsCount > 0) {
+          <p class="dash-card__big-number">{{ d.newSuggestionsCount }}</p>
+          <p class="dash-card__empty">nouvelle{{ d.newSuggestionsCount > 1 ? 's' : '' }} suggestion{{ d.newSuggestionsCount > 1 ? 's' : '' }} à explorer</p>
+        } @else {
+          <p class="dash-card__empty">Aucune nouvelle suggestion pour l'instant.</p>
+        }
+      </div>
+
+      <div class="dash-card dash-card--full">
+        <p class="eyebrow">Les 5 prochains jours</p>
+        <div class="mini-calendar">
+          @for (day of d.upcomingCalendar; track day.date) {
+            <div class="mini-calendar__day" [class.mini-calendar__day--active]="day.postingDay">
+              <span class="mini-calendar__date">{{ formatDate(day.date) }}</span>
+              @if (day.postingDay) {
+                <mat-icon>edit_note</mat-icon>
+                <span class="mini-calendar__type">{{ contentTypeLabel(day.suggestedContentType) }}</span>
+              } @else {
+                <span class="mini-calendar__rest">—</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (d.quickActions.length > 0) {
+        <div class="dash-card dash-card--full dash-card--actions">
+          <p class="eyebrow">Actions rapides</p>
+          <div class="quick-actions">
+            @for (action of d.quickActions; track action) {
+              <button mat-stroked-button (click)="runQuickAction(action)">{{ humanizeAction(action) }}</button>
+            }
+          </div>
+        </div>
+      }
+
+    </section>
+  </div>
+} @else {
+  <div class="state-container">
+    <p>Aucune donnée disponible pour le moment.</p>
+  </div>
+}

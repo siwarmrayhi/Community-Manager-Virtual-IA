@@ -1,0 +1,26 @@
+<div class="confirm">
+  @switch (state()) {
+    @case ('confirming') {
+      <div class="confirm__state">
+        <mat-spinner diameter="48" />
+        <p>Confirmation de ton abonnement en cours...</p>
+      </div>
+    }
+    @case ('success') {
+      <div class="confirm__state">
+        <mat-icon class="confirm__icon confirm__icon--success">check_circle</mat-icon>
+        <h1>Abonnement activé !</h1>
+        <p>5 posts de bienvenue ont été générés automatiquement. Direction ton tableau de bord pour les valider.</p>
+        <button mat-flat-button class="confirm__cta" (click)="goToDashboard()">Aller au tableau de bord</button>
+      </div>
+    }
+    @case ('error') {
+      <div class="confirm__state">
+        <mat-icon class="confirm__icon confirm__icon--error">error_outline</mat-icon>
+        <h1>Un problème est survenu</h1>
+        <p>{{ errorMessage() }}</p>
+        <a routerLink="/subscribe" class="confirm__retry">Réessayer la configuration</a>
+      </div>
+    }
+  }
+</div>

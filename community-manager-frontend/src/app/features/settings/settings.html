@@ -1,0 +1,69 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement de ton abonnement...</p>
+  </div>
+} @else if (errorMessage() && !status()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="load()">Réessayer</button>
+  </div>
+} @else {
+  <div class="settings">
+    <p class="eyebrow">Abonnement</p>
+    <h1 class="settings__title">Gérer votre abonnement</h1>
+
+    <section class="settings-card">
+      <div class="settings-card__row">
+        <div>
+          <p class="settings-card__label">Statut</p>
+          <span class="status-badge" [class]="'status-badge--' + (status() ?? '').toLowerCase()">
+            {{ status() ? statusLabel(status()!) : '—' }}
+          </span>
+        </div>
+
+        @if (service(); as s) {
+          <div class="settings-card__price">
+            <span class="settings-card__price-value">{{ s.monthlyPrice }} {{ s.currency }}</span>
+            <span class="settings-card__price-period">/ mois</span>
+          </div>
+        }
+      </div>
+
+      @if (configuration(); as c) {
+        <div class="settings-card__networks">
+          @for (n of c.targetNetworks; track n) {
+            <span class="chip">{{ networkLabel(n) }}</span>
+          }
+        </div>
+        <p class="settings-card__sector">Secteur : {{ c.sector }}</p>
+      } @else {
+        <p class="settings-card__empty">Aucune configuration associée pour le moment.</p>
+      }
+    </section>
+
+    @if (errorMessage()) {
+      <p class="settings__error">{{ errorMessage() }}</p>
+    }
+
+    @if (status() === 'ACTIVE' || status() === 'PENDING') {
+      <div class="settings-actions">
+        <a routerLink="/app/configuration" mat-stroked-button>
+          <mat-icon>tune</mat-icon>
+          Modifier la configuration
+        </a>
+        <button mat-stroked-button class="btn-danger" [disabled]="cancelling()" (click)="unsubscribe()">
+          <mat-icon>cancel</mat-icon>
+          @if (cancelling()) { Résiliation... } @else { Se désabonner }
+        </button>
+      </div>
+    } @else if (status() === 'CANCELLED') {
+      <div class="settings-cancelled">
+        <mat-icon>info</mat-icon>
+        <p>Ton abonnement est résilié. Tu peux te réabonner à tout moment.</p>
+        <a routerLink="/subscribe" mat-flat-button class="btn-accent">Se réabonner</a>
+      </div>
+    }
+  </div>
+}

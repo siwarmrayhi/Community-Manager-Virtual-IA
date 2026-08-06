@@ -1,0 +1,38 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+  height: 100%;
+}
+
+:root {
+  // Palette
+  --cm-ink: #14161b;
+  --cm-ink-soft: #5b5f6b;
+  --cm-surface: #faf9f7;
+  --cm-surface-raised: #ffffff;
+  --cm-accent: #4f3cc9;
+  --cm-accent-ink: #ffffff;
+  --cm-accent-soft: #eeebfb;
+  --cm-line: #e6e4e0;
+
+  // Typographie
+  --cm-font-display: 'Space Grotesk', 'Roboto', sans-serif;
+  --cm-font-body: 'Roboto', 'Helvetica Neue', sans-serif;
+  --cm-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: var(--cm-font-body);
+  background: var(--cm-surface);
+  color: var(--cm-ink);
+}

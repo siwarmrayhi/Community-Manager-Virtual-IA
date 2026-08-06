@@ -1,0 +1,147 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement du service...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="loadService()">Réessayer</button>
+  </div>
+} @else if (service(); as s) {
+
+  <div class="sticky-cta" [class.sticky-cta--visible]="showStickyBar()">
+    <span class="sticky-cta__label">{{ s.name }}</span>
+    <div class="sticky-cta__right">
+      <span class="sticky-cta__price">{{ s.monthlyPrice }} {{ s.currency }} / mois</span>
+      <button mat-flat-button class="sticky-cta__btn" (click)="onSubscribe()">S'abonner</button>
+    </div>
+  </div>
+
+  <main class="landing">
+
+    <section class="hero">
+      <div class="hero__content">
+        <p class="eyebrow">Community Manager Virtuel · Tunisia Invest</p>
+
+        <h1 class="hero__title">
+          @for (word of splitWords(s.name); track $index; let i = $index) {
+            <span class="word" [style.animation-delay.ms]="i * 90">{{ word }}&nbsp;</span>
+          }
+        </h1>
+
+        <p class="hero__subtitle">{{ s.description }}</p>
+
+        <div class="hero__stats">
+          <div class="stat">
+            <span class="stat__value">{{ networkCount() }}</span>
+            <span class="stat__label">réseaux couverts</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value">{{ contentTypeCount() }}</span>
+            <span class="stat__label">formats de contenu</span>
+          </div>
+        </div>
+
+        <div class="hero__cta-row">
+          <button mat-flat-button class="hero__cta" (click)="onSubscribe()">S'abonner</button>
+          <p class="hero__price">
+            <span class="hero__price-value">{{ s.monthlyPrice }} {{ s.currency }}</span>
+            <span class="hero__price-period">/ mois</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="hero__preview" aria-hidden="true">
+        <div class="post-card">
+          <span class="post-card__tag">À valider par vous</span>
+          <div class="post-card__header">
+            <span class="post-card__avatar"></span>
+            <div class="post-card__meta">
+              <span class="post-card__name"></span>
+              <span class="post-card__handle">Généré par l'IA · en attente</span>
+            </div>
+          </div>
+          <div class="post-card__body">
+            <span class="post-card__line post-card__line--80"></span>
+            <span class="post-card__line post-card__line--100"></span>
+            <span class="post-card__line-wrap">
+              <span class="post-card__line post-card__line--60"></span>
+              <span class="post-card__cursor"></span>
+            </span>
+          </div>
+          <div class="post-card__footer">
+            <mat-icon>thumb_up</mat-icon>
+            <mat-icon>mode_comment</mat-icon>
+            <mat-icon>share</mat-icon>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bento reveal">
+
+      <div class="bento-cell bento-cell--flow">
+        <p class="eyebrow">Comment ça marche</p>
+        <h2 class="bento-cell__title">Rien ne part sans votre feu vert</h2>
+        <ol class="mini-flow">
+          @for (step of s.validationFlow; track step; let i = $index) {
+            <li [style.transition-delay.ms]="i * 90">
+              <span class="mini-flow__marker">{{ i + 1 }}</span>
+              <span class="mini-flow__label">{{ step }}</span>
+            </li>
+          }
+        </ol>
+      </div>
+
+      <div class="bento-cell bento-cell--content">
+        <p class="eyebrow">Ce que l'IA rédige</p>
+        <h2 class="bento-cell__title">Six formats, un ton qui vous ressemble</h2>
+        <div class="mini-grid">
+          @for (type of s.contentTypes; track type; let i = $index) {
+            <div class="mini-grid__item" [style.transition-delay.ms]="i * 60">
+              <mat-icon>{{ contentTypeIcon(type) }}</mat-icon>
+              <span>{{ contentTypeLabel(type) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      @for (network of s.includedNetworks; track network) {
+        <div class="bento-cell bento-cell--network" [class]="'bento-cell--' + network.toLowerCase()">
+          <span class="bento-cell__dot"></span>
+          <h3>{{ networkLabel(network) }}</h3>
+          <p>{{ networkDetail(network) }}</p>
+        </div>
+      }
+
+      <div class="bento-cell bento-cell--accent">
+        <mat-icon>auto_awesome</mat-icon>
+        <p>Génération assistée par IA, validée par vous</p>
+      </div>
+
+      <div class="bento-cell bento-cell--price">
+        <div>
+          <p class="eyebrow eyebrow--on-accent">Abonnement mensuel</p>
+          <p class="bento-cell__price-value">{{ s.monthlyPrice }} {{ s.currency }} <span>/ mois</span></p>
+          <p class="bento-cell__price-note">Résiliable à tout moment</p>
+        </div>
+        <button mat-flat-button class="bento-cell__cta" (click)="onSubscribe()">S'abonner</button>
+      </div>
+
+    </section>
+
+    <section class="closing reveal">
+      <h2 class="closing__title">Prêt à déléguer, sans jamais perdre la main ?</h2>
+      <button mat-flat-button class="closing__cta" (click)="onSubscribe()">
+        S'abonner pour {{ s.monthlyPrice }} {{ s.currency }} / mois
+      </button>
+    </section>
+
+  </main>
+} @else {
+  <div class="state-container">
+    <p>Aucune information disponible pour le moment.</p>
+  </div>
+}

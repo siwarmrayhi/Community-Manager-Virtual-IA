@@ -1,0 +1,66 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement des statistiques...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="load()">Réessayer</button>
+  </div>
+} @else if (stats(); as s) {
+  <div class="stats-page">
+    <p class="eyebrow">Statistiques</p>
+    <h1 class="stats-page__title">Statistiques détaillées</h1>
+
+    <div class="headline-grid">
+      <div class="headline-card">
+        <span class="headline-card__value">{{ generatedCount() }}</span>
+        <span class="headline-card__label">posts générés</span>
+      </div>
+      <div class="headline-card">
+        <span class="headline-card__value">{{ validatedCount() }}</span>
+        <span class="headline-card__label">posts validés</span>
+      </div>
+      <div class="headline-card">
+        <span class="headline-card__value">{{ rateCount() }}%</span>
+        <span class="headline-card__label">taux de validation</span>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <mat-icon>share</mat-icon>
+        <p class="feature-card__label">Réseau le plus actif</p>
+        <p class="feature-card__value">{{ networkLabel(s.mostUsedNetwork) }}</p>
+      </div>
+      <div class="feature-card">
+        <mat-icon>article</mat-icon>
+        <p class="feature-card__label">Format le plus utilisé</p>
+        <p class="feature-card__value">{{ contentTypeLabel(s.mostUsedContentType) }}</p>
+      </div>
+    </div>
+
+    <section class="breakdown">
+      <p class="eyebrow">Répartition</p>
+      <h2 class="breakdown__title">Posts par statut</h2>
+
+      @if (statusBars().length === 0) {
+        <p class="breakdown__empty">Aucun post généré pour le moment.</p>
+      } @else {
+        <div class="bar-list">
+          @for (bar of statusBars(); track bar.key) {
+            <div class="bar-row">
+              <span class="bar-row__label">{{ bar.label }}</span>
+              <div class="bar-row__track">
+                <div class="bar-row__fill" [class]="'bar-row__fill--' + bar.key.toLowerCase()" [style.width.%]="bar.percent"></div>
+              </div>
+              <span class="bar-row__count">{{ bar.count }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+}

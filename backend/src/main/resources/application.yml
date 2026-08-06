@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: community-manager-api
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:cmdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+groq:
+  api-key: ${GROQ_API_KEY:}
+  base-url: ${GROQ_BASE_URL:https://api.groq.com/openai/v1}
+  model: ${GROQ_MODEL:llama-3.3-70b-versatile}
+
+paypal:
+  client-id: ${PAYPAL_CLIENT_ID:}
+  client-secret: ${PAYPAL_CLIENT_SECRET:}
+  base-url: ${PAYPAL_BASE_URL:https://api-m.sandbox.paypal.com}
+  plan-id: ${PAYPAL_PLAN_ID:}
+  return-url: ${PAYPAL_RETURN_URL:http://localhost:4200/subscribe/confirm}
+  cancel-url: ${PAYPAL_CANCEL_URL:http://localhost:4200/subscribe/annule}
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:8081,http://127.0.0.1:8081,http://localhost:4200,http://127.0.0.1:4200}
+  jwt:
+    secret: ${JWT_SECRET:}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:1440}

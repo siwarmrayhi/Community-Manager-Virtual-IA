@@ -1,0 +1,94 @@
+<div class="auth-page">
+  <aside class="auth-brand" aria-hidden="true">
+    <div class="auth-brand__content">
+      <p class="eyebrow eyebrow--on-dark">Community Manager Virtuel · Tunisia Invest</p>
+      <h1 class="auth-brand__title">Rejoignez les partenaires qui délèguent leur contenu, sans jamais perdre la main.</h1>
+      <ul class="auth-brand__points">
+        <li><mat-icon>check_circle</mat-icon> 6 formats de contenu générés pour vous</li>
+        <li><mat-icon>check_circle</mat-icon> Un calendrier éditorial prêt en un clic</li>
+        <li><mat-icon>check_circle</mat-icon> Rien ne part sans votre validation</li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="auth-form-panel">
+    <div class="auth-card">
+      <p class="eyebrow">Espace partenaire</p>
+      <h2 class="auth-card__title">Créer un compte</h2>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card__form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <mat-error>Entre un email valide (ex. nom&#64;domaine.com).</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <ul class="password-checklist">
+          <li [class.is-met]="hasMinLength()">
+            <mat-icon>{{ hasMinLength() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            8 caractères minimum
+          </li>
+          <li [class.is-met]="hasUppercase()">
+            <mat-icon>{{ hasUppercase() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            1 majuscule
+          </li>
+          <li [class.is-met]="hasDigit()">
+            <mat-icon>{{ hasDigit() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            1 chiffre
+          </li>
+          <li [class.is-met]="hasSpecialChar()">
+            <mat-icon>{{ hasSpecialChar() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            1 caractère spécial
+          </li>
+        </ul>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input
+            matInput
+            [type]="showConfirmPassword() ? 'text' : 'password'"
+            formControlName="confirmPassword"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            [attr.aria-label]="showConfirmPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.controls.confirmPassword.touched && form.hasError('passwordsMismatch')) {
+            <mat-error>Les mots de passe ne correspondent pas.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <p class="auth-card__error">{{ errorMessage() }}</p>
+        }
+
+        <button mat-flat-button type="submit" class="auth-card__submit" [disabled]="submitting()">
+          @if (submitting()) { Création... } @else { Créer mon compte }
+        </button>
+      </form>
+
+      <p class="auth-card__switch">Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+    </div>
+  </main>
+</div>

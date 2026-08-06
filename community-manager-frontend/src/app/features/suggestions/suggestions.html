@@ -1,0 +1,69 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement des suggestions...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="loadSuggestions()">Réessayer</button>
+  </div>
+} @else {
+  <div class="sug">
+    <p class="eyebrow">Suggestions intelligentes</p>
+    <h1 class="sug__title">Sujets suggérés</h1>
+    <p class="sug__subtitle">Basées sur les nouvelles annonces publiées sur la plateforme.</p>
+
+    @if (suggestions().length === 0) {
+      <div class="state-container">
+        <mat-icon>auto_awesome</mat-icon>
+        <p>Aucune suggestion pour le moment. Le système surveille les nouvelles annonces et proposera des sujets ici dès qu'il y en a.</p>
+      </div>
+    } @else {
+      <div class="sug-grid">
+        @for (s of suggestions(); track s.id) {
+          <article class="sug-card" [class.sug-card--used]="isGenerated(s.id) || s.status !== 'NEW'">
+            <header class="sug-card__header">
+              <span class="chip chip--type">{{ contentTypeLabel(s.contentType) }}</span>
+              <span class="chip chip--status" [class]="'chip--status-' + s.status.toLowerCase()">{{ statusLabel(s.status) }}</span>
+            </header>
+
+            <h2 class="sug-card__title">{{ s.title }}</h2>
+            <p class="sug-card__description">{{ s.description }}</p>
+
+            @if (s.suggestedHashtags) {
+              <p class="sug-card__hashtags">{{ s.suggestedHashtags }}</p>
+            }
+
+            <footer class="sug-card__footer">
+              <span class="sug-card__date">
+                <mat-icon>event</mat-icon>
+                {{ s.suggestedDate }}
+              </span>
+              @if (s.sourceReference) {
+                <span class="sug-card__source">{{ s.sourceReference }}</span>
+              }
+            </footer>
+
+            @if (isGenerated(s.id)) {
+              <p class="sug-card__done">
+                <mat-icon>check_circle</mat-icon> Post généré — retrouve-le dans la bibliothèque
+              </p>
+            } @else if (s.status === 'NEW') {
+              <button
+                mat-flat-button
+                class="sug-card__cta"
+                [disabled]="actionLoadingId() === s.id"
+                (click)="generateFromSuggestion(s)"
+              >
+                <mat-icon>auto_awesome</mat-icon>
+                @if (actionLoadingId() === s.id) { Génération... } @else { Générer un post }
+              </button>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,142 @@
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement de ta configuration...</p>
+  </div>
+} @else if (errorMessage() && !hasConfiguration()) {
+  <div class="state-container state-container--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-stroked-button (click)="loadConfiguration()">Réessayer</button>
+  </div>
+} @else if (!hasConfiguration()) {
+  <div class="state-container">
+    <mat-icon>tune</mat-icon>
+    <p>Aucune configuration trouvée. Termine d'abord ta souscription pour pouvoir la modifier ici.</p>
+    <a routerLink="/subscribe" mat-flat-button class="btn-accent">Aller à la souscription</a>
+  </div>
+} @else {
+  <div class="config">
+    <p class="eyebrow">Configuration</p>
+    <h1 class="config__title">Réglages de votre Community Manager</h1>
+    <p class="config__subtitle">Modifie à tout moment le ton, la langue, la fréquence ou le secteur — les prochains posts générés en tiendront compte.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="config__form">
+
+      <section class="config-section">
+        <p class="config-section__eyebrow">Réseaux</p>
+        <h2 class="config-section__title">Réseaux ciblés</h2>
+        <div class="network-cards">
+          <label class="network-card network-card--linkedin" [class.network-card--selected]="form.controls.linkedin.value">
+            <input type="checkbox" formControlName="linkedin" class="network-card__input" />
+            <span class="network-card__dot"></span>
+            <span class="network-card__name">LinkedIn</span>
+            <span class="network-card__spec">{{ networkSpecs.LINKEDIN }}</span>
+            <mat-icon class="network-card__check">check_circle</mat-icon>
+          </label>
+          <label class="network-card network-card--facebook" [class.network-card--selected]="form.controls.facebook.value">
+            <input type="checkbox" formControlName="facebook" class="network-card__input" />
+            <span class="network-card__dot"></span>
+            <span class="network-card__name">Facebook</span>
+            <span class="network-card__spec">{{ networkSpecs.FACEBOOK }}</span>
+            <mat-icon class="network-card__check">check_circle</mat-icon>
+          </label>
+          <label class="network-card network-card--instagram" [class.network-card--selected]="form.controls.instagram.value">
+            <input type="checkbox" formControlName="instagram" class="network-card__input" />
+            <span class="network-card__dot"></span>
+            <span class="network-card__name">Instagram</span>
+            <span class="network-card__spec">{{ networkSpecs.INSTAGRAM }}</span>
+            <mat-icon class="network-card__check">check_circle</mat-icon>
+          </label>
+        </div>
+        @if (networkError()) {
+          <p class="config__error">{{ networkError() }}</p>
+        }
+      </section>
+
+      <section class="config-section">
+        <p class="config-section__eyebrow">Style</p>
+        <h2 class="config-section__title">Ton & style</h2>
+
+        <div class="field-group">
+          <span class="field-group__label">Ton</span>
+          <div class="choice-grid" role="radiogroup" aria-label="Ton">
+            @for (t of tones; track t) {
+              <button type="button" role="radio" [attr.aria-checked]="form.controls.tone.value === t"
+                class="choice-card" [class.choice-card--selected]="form.controls.tone.value === t" (click)="selectTone(t)">
+                <mat-icon>{{ toneIcons[t] }}</mat-icon>
+                <span>{{ toneLabel(t) }}</span>
+                <mat-icon class="choice-card__check">check_circle</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-group__label">Langue</span>
+          <div class="choice-grid" role="radiogroup" aria-label="Langue">
+            @for (l of languages; track l) {
+              <button type="button" role="radio" [attr.aria-checked]="form.controls.language.value === l"
+                class="choice-card" [class.choice-card--selected]="form.controls.language.value === l" (click)="selectLanguage(l)">
+                <mat-icon>{{ languageIcons[l] }}</mat-icon>
+                <span>{{ languageLabel(l) }}</span>
+                <mat-icon class="choice-card__check">check_circle</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-group__label">Fréquence</span>
+          <div class="choice-grid" role="radiogroup" aria-label="Fréquence">
+            @for (f of frequencies; track f) {
+              <button type="button" role="radio" [attr.aria-checked]="form.controls.frequency.value === f"
+                class="choice-card" [class.choice-card--selected]="form.controls.frequency.value === f" (click)="selectFrequency(f)">
+                <mat-icon>{{ frequencyIcons[f] }}</mat-icon>
+                <span>{{ frequencyLabel(f) }}</span>
+                <mat-icon class="choice-card__check">check_circle</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="config-section">
+        <p class="config-section__eyebrow">Activité</p>
+        <h2 class="config-section__title">Votre activité</h2>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Secteur d'activité</mat-label>
+          <input matInput formControlName="sector" />
+          @if (form.controls.sector.touched && form.controls.sector.invalid) {
+            <mat-error>Le secteur est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mots-clés</mat-label>
+          <input matInput formControlName="keywords" />
+          <mat-hint>Séparés par des virgules</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description de l'entreprise ou du profil</mat-label>
+          <textarea matInput rows="3" formControlName="profileDescription"></textarea>
+        </mat-form-field>
+      </section>
+
+      @if (errorMessage()) {
+        <p class="config__error config__error--global">{{ errorMessage() }}</p>
+      }
+      @if (saveMessage()) {
+        <p class="config__success">{{ saveMessage() }}</p>
+      }
+
+      <div class="config__submit-row">
+        <button mat-flat-button type="submit" class="config__submit" [disabled]="saving()">
+          @if (saving()) { Enregistrement... } @else { Enregistrer les modifications }
+        </button>
+      </div>
+    </form>
+  </div>
+}

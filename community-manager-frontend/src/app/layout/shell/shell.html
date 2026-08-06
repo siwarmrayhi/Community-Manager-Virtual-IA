@@ -1,0 +1,40 @@
+<div class="shell">
+  <button class="shell__mobile-toggle" mat-icon-button (click)="toggleMobileNav()" aria-label="Ouvrir le menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  @if (mobileNavOpen()) {
+    <div class="shell__scrim" (click)="closeMobileNav()"></div>
+  }
+
+  <aside class="shell__sidebar" [class.shell__sidebar--open]="mobileNavOpen()">
+    <div class="shell__brand">
+      <span class="shell__brand-mark"></span>
+      <span class="shell__brand-name">Community Manager</span>
+    </div>
+
+    <nav class="shell__nav">
+      @for (item of navItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="is-active" class="shell__nav-link" (click)="closeMobileNav()">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="shell__footer">
+      <div class="shell__user">
+        <span class="shell__user-avatar"></span>
+        <span class="shell__user-email">{{ session.userEmail() }}</span>
+      </div>
+      <button mat-stroked-button class="shell__logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <main class="shell__content">
+    <router-outlet />
+  </main>
+</div>

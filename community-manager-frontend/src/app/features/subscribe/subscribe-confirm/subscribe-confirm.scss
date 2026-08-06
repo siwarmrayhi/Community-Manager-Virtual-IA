@@ -1,0 +1,52 @@
+.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.confirm__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  max-width: 440px;
+
+  h1 {
+    font-family: var(--cm-font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p {
+    color: var(--cm-ink-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.confirm__icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+
+  &--success { color: #16a34a; }
+  &--error { color: #b3261e; }
+}
+
+.confirm__cta {
+  --mdc-filled-button-container-color: var(--cm-accent);
+  --mdc-filled-button-label-text-color: var(--cm-accent-ink);
+  height: 48px;
+  padding: 0 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.confirm__retry {
+  color: var(--cm-accent);
+  font-weight: 500;
+  margin-top: 0.5rem;
+}

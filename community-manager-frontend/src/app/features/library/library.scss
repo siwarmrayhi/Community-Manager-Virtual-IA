@@ -1,0 +1,240 @@
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 2rem;
+  text-align: center;
+  color: var(--cm-ink-soft);
+
+  &--error mat-icon {
+    color: #b3261e;
+  }
+}
+
+.eyebrow {
+  font-family: var(--cm-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cm-accent);
+  margin: 0 0 0.5rem;
+}
+
+.lib {
+  max-width: 1000px;
+}
+
+.lib__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.lib__title {
+  font-family: var(--cm-font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.lib__generate {
+  --mdc-filled-button-container-color: var(--cm-accent);
+  --mdc-filled-button-label-text-color: var(--cm-accent-ink);
+  height: 44px;
+  padding: 0 1.25rem;
+
+  mat-icon {
+    margin-right: 0.4rem;
+  }
+}
+
+.stats-strip {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  border: 1px solid var(--cm-line);
+  border-radius: 14px;
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--cm-surface-raised);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__value {
+    font-family: var(--cm-font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--cm-accent);
+
+    &--text {
+      font-size: 1rem;
+      color: var(--cm-ink);
+    }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: var(--cm-ink-soft);
+  }
+}
+
+.filters {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  mat-form-field {
+    width: 160px;
+  }
+
+  &__reset {
+    height: 56px;
+  }
+}
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.post-card {
+  border: 1px solid var(--cm-line);
+  border-radius: 14px;
+  background: var(--cm-surface-raised);
+  padding: 1.25rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+
+  &__type {
+    font-size: 0.82rem;
+    color: var(--cm-ink-soft);
+  }
+
+  &__date {
+    margin-left: auto;
+    font-family: var(--cm-font-mono);
+    font-size: 0.72rem;
+    color: var(--cm-ink-soft);
+  }
+
+  &__notice {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: #92400e;
+    background: #fef3c7;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    margin: 0 0 0.75rem;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__text {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin: 0 0 0.5rem;
+    white-space: pre-wrap;
+  }
+
+  &__hashtags {
+    font-size: 0.82rem;
+    color: var(--cm-accent);
+    margin: 0 0 0.75rem;
+  }
+
+  &__edit-area {
+    width: 100%;
+    font-family: var(--cm-font-body);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    border: 1px solid var(--cm-line);
+    border-radius: 8px;
+    padding: 0.75rem;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 0.3rem;
+    }
+  }
+}
+
+.btn-accent {
+  --mdc-filled-button-container-color: var(--cm-accent);
+  --mdc-filled-button-label-text-color: var(--cm-accent-ink);
+}
+
+.btn-danger {
+  color: #b3261e;
+  border-color: #b3261e;
+}
+
+// ---------- Chips ----------
+
+.chip {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.chip--network {
+  color: #fff;
+
+  &.chip--linkedin { background: #0a66c2; }
+  &.chip--facebook { background: #1877f2; }
+  &.chip--instagram { background: linear-gradient(135deg, #feda75, #d62976, #4f5bd5); }
+}
+
+.chip--status {
+  background: var(--cm-line);
+  color: var(--cm-ink-soft);
+
+  &.chip--status-pending_validation,
+  &.chip--status-generated {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.chip--status-ready_to_publish {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.chip--status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
