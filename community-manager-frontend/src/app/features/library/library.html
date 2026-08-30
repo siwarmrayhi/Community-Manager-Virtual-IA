@@ -10,6 +10,10 @@
     </button>
   </header>
 
+  @if (generateMessage()) {
+    <p class="lib__generate-message">{{ generateMessage() }}</p>
+  }
+
   @if (statistics(); as stats) {
     <div class="stats-strip">
       <div class="stats-strip__item">

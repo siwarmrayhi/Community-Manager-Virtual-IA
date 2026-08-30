@@ -13,6 +13,8 @@ import { StatisticsResponse } from '../../core/models/dashboard.model';
 import { Session } from '../../core/state/session';
 import { getHttpErrorMessage } from '../../core/utils/http-error.util';
 import { Network, ContentType, PostStatus } from '../../core/models/enums';
+import { MatDialog } from '@angular/material/dialog';
+import { GeneratePostDialog, GeneratePostDialogResult } from '../../shared/components/generate-post-dialog/generate-post-dialog';
 
 @Component({
   selector: 'app-library',
@@ -34,9 +36,10 @@ export class Library implements OnInit {
 
   protected readonly posts = signal<PostResponse[]>([]);
   protected readonly statistics = signal<StatisticsResponse | null>(null);
-  protected readonly loading = signal(true);
+  protected loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly generating = signal(false);
+  protected readonly generateMessage = signal<string | null>(null);
 
   protected readonly editingId = signal<number | null>(null);
   protected readonly editText = signal('');
@@ -55,7 +58,7 @@ export class Library implements OnInit {
   ];
   // ⚠️ Placeholder non confirmé, voir core/models/enums.ts
   protected readonly statuses: PostStatus[] = ['GENERATED', 'PENDING_VALIDATION', 'READY_TO_PUBLISH', 'REJECTED'];
-
+  private readonly dialog = inject(MatDialog);
   private readonly networkLabels: Record<string, string> = {
     LINKEDIN: 'LinkedIn',
     FACEBOOK: 'Facebook',
@@ -124,20 +127,28 @@ export class Library implements OnInit {
     this.loadPosts();
   }
 
-  protected generatePost(): void {
+    protected generatePost(): void {
     const userEmail = this.session.userEmail();
     if (!userEmail) return;
 
-    this.generating.set(true);
-    this.postService.generatePosts({ userEmail }).subscribe({
-      next: () => {
-        this.generating.set(false);
-        this.loadPosts();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.generating.set(false);
-        this.errorMessage.set(getHttpErrorMessage(error));
-      },
+    const dialogRef = this.dialog.open(GeneratePostDialog);
+
+    dialogRef.afterClosed().subscribe((result: GeneratePostDialogResult | undefined) => {
+      if (!result) return; // modale annulée
+
+      this.generating.set(true);
+      this.generateMessage.set(null);
+
+      this.postService.generatePosts({ userEmail, ...result }).subscribe({
+        next: () => {
+          this.generating.set(false);
+          this.loadPosts();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.generating.set(false);
+          this.generateMessage.set(getHttpErrorMessage(error));
+        },
+      });
     });
   }
 

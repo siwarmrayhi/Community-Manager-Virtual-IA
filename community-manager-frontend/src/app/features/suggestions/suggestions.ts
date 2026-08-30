@@ -26,6 +26,7 @@ export class Suggestions implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly actionLoadingId = signal<number | null>(null);
   protected readonly generatedIds = signal<Set<number>>(new Set());
+  protected readonly actionErrorMessage = signal<string | null>(null);
 
   private readonly contentTypeLabels: Record<string, string> = {
     LISTING_PROMO: 'Annonce & opportunité',
@@ -84,9 +85,9 @@ export class Suggestions implements OnInit {
           this.actionLoadingId.set(null);
           this.generatedIds.update((set) => new Set(set).add(suggestion.id));
         },
-        error: (error: HttpErrorResponse) => {
+            error: (error: HttpErrorResponse) => {
           this.actionLoadingId.set(null);
-          this.errorMessage.set(getHttpErrorMessage(error));
+          this.actionErrorMessage.set(getHttpErrorMessage(error));
         },
       });
   }

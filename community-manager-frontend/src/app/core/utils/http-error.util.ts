@@ -1,11 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-/**
- * Construit un message affichable à l'utilisateur à partir d'une erreur HTTP.
- * Utilise le message du backend s'il en fournit un, sinon retombe sur un
- * message générique selon le code de statut (400 / 404 en particulier,
- * comme demandé dans le cahier des charges).
- */
 export function getHttpErrorMessage(error: HttpErrorResponse): string {
   const backendMessage =
     typeof error.error === 'string' ? error.error : error.error?.message;
@@ -17,6 +11,8 @@ export function getHttpErrorMessage(error: HttpErrorResponse): string {
   switch (error.status) {
     case 400:
       return 'Certaines informations sont invalides ou manquantes.';
+    case 403:
+      return "Cette action n'est pas autorisée — vérifie le statut de ton abonnement.";
     case 404:
       return 'Ressource introuvable.';
     case 0:

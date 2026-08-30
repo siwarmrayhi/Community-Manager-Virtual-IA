@@ -15,6 +15,9 @@
     <h1 class="sug__title">Sujets suggérés</h1>
     <p class="sug__subtitle">Basées sur les nouvelles annonces publiées sur la plateforme.</p>
 
+    @if (actionErrorMessage()) {
+      <p class="sug__action-error">{{ actionErrorMessage() }}</p>
+    }
     @if (suggestions().length === 0) {
       <div class="state-container">
         <mat-icon>auto_awesome</mat-icon>

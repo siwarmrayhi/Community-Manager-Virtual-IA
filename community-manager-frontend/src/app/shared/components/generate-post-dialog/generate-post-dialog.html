@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Générer un post</h2>
+
+<mat-dialog-content class="generate-dialog">
+  <p class="generate-dialog__hint">Laisse un champ vide pour que l'IA utilise ta configuration par défaut.</p>
+
+  <fieldset class="generate-dialog__networks">
+    <legend>Réseaux (optionnel)</legend>
+    <label><input type="checkbox" [formControl]="form.controls.linkedin" /> LinkedIn</label>
+    <label><input type="checkbox" [formControl]="form.controls.facebook" /> Facebook</label>
+    <label><input type="checkbox" [formControl]="form.controls.instagram" /> Instagram</label>
+  </fieldset>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Type de contenu</mat-label>
+    <mat-select [formControl]="form.controls.contentType">
+      <mat-option value="">Laisser l'IA choisir</mat-option>
+      @for (t of contentTypes; track t) {
+        <mat-option [value]="t">{{ contentTypeLabel(t) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Sujet</mat-label>
+    <input matInput [formControl]="form.controls.topic" placeholder="Ex: lancement d'un nouveau bien immobilier" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Instructions supplémentaires</mat-label>
+    <textarea matInput rows="3" [formControl]="form.controls.additionalInstructions"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date prévue</mat-label>
+    <input matInput type="date" [formControl]="form.controls.plannedDate" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">Annuler</button>
+  <button mat-flat-button class="btn-accent" (click)="onGenerate()">Générer</button>
+</mat-dialog-actions>

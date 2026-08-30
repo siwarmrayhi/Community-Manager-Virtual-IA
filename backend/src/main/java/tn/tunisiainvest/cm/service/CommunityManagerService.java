@@ -55,7 +55,7 @@ import tn.tunisiainvest.cm.repository.SuggestionRepository;
 @Service
 public class CommunityManagerService {
 
-    private static final BigDecimal MONTHLY_PRICE = BigDecimal.valueOf(99);
+    private static final BigDecimal MONTHLY_PRICE = BigDecimal.valueOf(29);
 
     private static final int WELCOME_POSTS_COUNT = 5;
 
@@ -260,6 +260,7 @@ public class CommunityManagerService {
     @Transactional
     public List<PostResponse> generateMonthlyContent(String userEmail) {
         CMConfiguration configuration = findConfiguration(userEmail);
+        ensureSubscriptionActive(configuration);
         if (configuration.getTargetNetworks().isEmpty()) {
             throw new IllegalStateException("Aucun reseau cible configure pour generer le calendrier.");
         }
@@ -324,6 +325,7 @@ public class CommunityManagerService {
     @Transactional
     public List<PostResponse> generatePosts(GeneratePostRequest request) {
         CMConfiguration configuration = findConfiguration(request.userEmail());
+        ensureSubscriptionActive(configuration);
         Set<Network> networks = request.networks() == null || request.networks().isEmpty()
                 ? configuration.getTargetNetworks()
                 : request.networks();
@@ -670,7 +672,11 @@ public class CommunityManagerService {
         suggestion.setStatus(SuggestionStatus.NEW);
         return suggestion;
     }
-
+    private void ensureSubscriptionActive(CMConfiguration configuration) {
+        if (configuration.getSubscription().getStatus() != SubscriptionStatus.ACTIVE) {
+            throw new IllegalStateException("Abonnement inactif — la génération de contenu est suspendue.");
+        }
+    }
     private CMConfiguration findConfiguration(String userEmail) {
         if (!StringUtils.hasText(userEmail)) {
             throw new IllegalArgumentException("userEmail is required");
