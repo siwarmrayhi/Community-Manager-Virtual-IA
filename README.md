@@ -16,7 +16,7 @@
 
 **Profil + ton + objectifs → publications LinkedIn, Facebook et Instagram → validation → publication**
 
-*Projet de [Siwar Mrayhi](https://github.com/siwarmrayhi).*
+*Projet de stage d'été réaliser par [Siwar Mrayhi](https://github.com/siwarmrayhi).* au sein de 3LM Solutions
 
 </div>
 
