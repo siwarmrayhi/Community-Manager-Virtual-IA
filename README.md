@@ -39,7 +39,7 @@ Elle génère automatiquement des publications pour les réseaux sociaux (**Link
 <div align="center">
 
 <!-- Remplacez VOTRE_LIEN_GOOGLE_DRIVE par le lien de votre vidéo -->
-<a href="VOTRE_LIEN_GOOGLE_DRIVE">
+<a href="https://drive.google.com/file/d/1kxrcvgv1XVrn1MPCHPpg4NU-oUuSrEIE/view?usp=sharing">
   <img src="./docs/assets/demo.svg" width="100%" alt="Voir la vidéo de démonstration sur Google Drive" />
 </a>
 
